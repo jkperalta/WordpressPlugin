@@ -13,7 +13,7 @@ add_action('wp_body_open', 'insert_text');
 add_action('wp_body_open', 'get_text');
 
 function insert_text() {
-    echo "this is text";
+    echo "this is text <br>";
 }
 
 function get_text() {
@@ -21,6 +21,16 @@ function get_text() {
     //extracts post content
     $content = apply_filters('the_content', get_the_content());
     $paragraphs = explode('</p>', $content);
+$index = count($paragraphs) - 2;
+
+echo "$paragraphs[$index]";
+
+        $index = 0;
+        foreach($paragraphs as $paragraph) {
+            echo "$index $paragraph <br>";
+            $index++;
+        }
+
     $first_paragraph = array_shift($paragraphs).'</p>';
 
     echo $first_paragraph;
@@ -32,5 +42,7 @@ function get_text() {
     echo $first_paragraph;
     echo $first_paragraph;
     echo $first_paragraph;
+
+
 }
 
