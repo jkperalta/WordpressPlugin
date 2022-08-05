@@ -9,12 +9,20 @@
 **/
 
 //testing usage of add_action with custom functions and various hooks
-add_action('wp_body_open', 'insert_text');
-add_action('wp_body_open', 'get_text');
 
-function insert_text() {
-    echo "this is text <br>";
+//add_action('wp_body_open', 'get_text');
+add_filter('the_content', 'last');
+//add_filter('the_content', 'first');
+
+
+
+function last($content) {
+    return $content . "HTML CODE 3";
 }
+function first($content) {
+    return "before text" . $content;
+}
+
 
 function get_text() {
 
@@ -30,19 +38,58 @@ echo "$paragraphs[$index]";
             echo "$index $paragraph <br>";
             $index++;
         }
-
-    $first_paragraph = array_shift($paragraphs).'</p>';
-
-    echo $first_paragraph;
-    $first_paragraph = array_shift($paragraphs).'</p>';
-
-    echo $first_paragraph;
-    $first_paragraph = array_shift($paragraphs).'</p>';
-
-    echo $first_paragraph;
-    echo $first_paragraph;
-    echo $first_paragraph;
-
-
 }
 
+
+//insert text after every n paragraphs in post
+add_filter( 'the_content', 'insert_media1' );
+add_filter( 'the_content', 'insert_media2' );
+
+
+function insert_media1( $content ) {
+ $media = "HTML CODE 1!!!!!!";
+ return insert_after_paragraph1( $media, 3, $content );
+}
+function insert_media2( $content ) {
+ $media = "HTML CODE 2 ------";
+ return insert_after_paragraph2( $media, 5, $content );
+}
+
+
+function insert_after_paragraph1( $insertion, $n, $content ) {
+
+ $paragraphs = explode( '</p>', $content );
+
+$index = 0;
+ foreach ($paragraphs as $paragraph) {
+     if ( trim( $paragraph ) ) {
+        $paragraphs[$index] .= '</p>';
+     }
+     if ( ($index + 1) % $n == 0 ) {
+        $paragraphs[$index] .= $insertion;
+     }
+     $index++;
+ }
+
+ return implode( '', $paragraphs );
+}
+
+
+
+function insert_after_paragraph2( $insertion, $n, $content ) {
+
+ $paragraphs = explode( '</p>', $content );
+
+$index = 0;
+ foreach ($paragraphs as $paragraph) {
+     if ( trim( $paragraph ) ) {
+        $paragraphs[$index] .= '</p>';
+     }
+     if ( (($index + 1) % $n == 0 ) && $index > 6 ) {
+        $paragraphs[$index] .= $insertion;
+     }
+     $index++;
+ }
+
+ return implode( '', $paragraphs );
+}
